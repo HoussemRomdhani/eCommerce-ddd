@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace eCommerce.Domain.Common
+namespace eCommerce.Domain.Core
 {
     public interface IDomainEventRepository
     {

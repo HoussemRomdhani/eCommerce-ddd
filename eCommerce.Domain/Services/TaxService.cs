@@ -1,4 +1,4 @@
-﻿using eCommerce.Domain.Common;
+﻿using eCommerce.Domain.Core;
 using eCommerce.Domain.Customers;
 using eCommerce.Domain.Customers.Specifications;
 using eCommerce.Domain.Products;

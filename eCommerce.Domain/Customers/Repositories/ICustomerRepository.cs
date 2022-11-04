@@ -1,4 +1,4 @@
-﻿using eCommerce.Domain.Common;
+﻿using eCommerce.Domain.Core;
 using System.Collections.Generic;
 
 namespace eCommerce.Domain.Customers.Repositories

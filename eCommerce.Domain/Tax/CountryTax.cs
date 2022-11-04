@@ -1,4 +1,4 @@
-﻿using eCommerce.Domain.Common;
+﻿using eCommerce.Domain.Core;
 using eCommerce.Domain.Countries;
 using System;
 

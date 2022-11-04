@@ -3,7 +3,7 @@ using System.Collections.ObjectModel;
 using System;
 using eCommerce.Domain.Countries;
 using eCommerce.Domain.Customers.Specifications;
-using eCommerce.Domain.Common;
+using eCommerce.Domain.Core;
 
 namespace eCommerce.Domain.Customers
 {

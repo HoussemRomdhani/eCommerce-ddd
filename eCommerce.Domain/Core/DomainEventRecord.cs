@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System;
 
-namespace eCommerce.Domain.Common
+namespace eCommerce.Domain.Core
 {
     public class DomainEventRecord
     {

@@ -1,5 +1,5 @@
 ﻿using eCommerce.Application.Products.Repositories;
-using eCommerce.Domain.Common;
+using eCommerce.Domain.Core;
 using eCommerce.Domain.Products;
 using eCommerce.Domain.Products.Spectifications;
 using LanguageExt;

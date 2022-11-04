@@ -1,5 +1,5 @@
 ﻿using System;
-using eCommerce.Domain.Common;
+using eCommerce.Domain.Core;
 
 namespace eCommerce.Domain.Products
 {

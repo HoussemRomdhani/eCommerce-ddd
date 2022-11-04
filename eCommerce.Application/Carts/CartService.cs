@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using eCommerce.Domain.Carts;
 using eCommerce.Domain.Carts.Specifications;
-using eCommerce.Domain.Common;
+using eCommerce.Domain.Core;
 using eCommerce.Domain.Customers;
 using eCommerce.Domain.Products;
 using eCommerce.Domain.Purchases;

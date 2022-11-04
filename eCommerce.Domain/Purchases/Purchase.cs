@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System;
-using eCommerce.Domain.Common;
+using eCommerce.Domain.Core;
 
 namespace eCommerce.Domain.Purchases
 {

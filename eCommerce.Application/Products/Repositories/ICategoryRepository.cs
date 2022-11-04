@@ -1,8 +1,8 @@
-﻿using eCommerce.Domain.Common;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System;
 using eCommerce.Domain.Products;
 using LanguageExt;
+using eCommerce.Domain.Core;
 
 namespace eCommerce.Application.Products.Repositories
 {

@@ -1,4 +1,4 @@
-﻿using eCommerce.Domain.Common;
+﻿using eCommerce.Domain.Core;
 using eCommerce.Domain.Products;
 using LanguageExt;
 using System;

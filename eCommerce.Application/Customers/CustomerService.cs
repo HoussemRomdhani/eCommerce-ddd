@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using eCommerce.Domain.Common;
+using eCommerce.Domain.Core;
 using eCommerce.Domain.Countries;
 using eCommerce.Domain.Customers;
 using eCommerce.Domain.Customers.Repositories;

@@ -1,4 +1,4 @@
-﻿using eCommerce.Domain.Common;
+﻿using eCommerce.Domain.Core;
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;

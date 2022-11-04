@@ -1,10 +1,10 @@
 ﻿using eCommerce.Domain.Carts;
-using eCommerce.Domain.Common;
 using eCommerce.Domain.Customers;
 using eCommerce.Domain.Products;
 using eCommerce.Domain.Purchases;
 using eCommerce.Domain.Products.Spectifications;
 using System;
+using eCommerce.Domain.Core;
 
 namespace eCommerce.Domain.Services
 {

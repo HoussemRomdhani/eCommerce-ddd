@@ -1,5 +1,5 @@
 ﻿using eCommerce.Domain.Carts;
-using eCommerce.Domain.Common;
+using eCommerce.Domain.Core;
 using System;
 using System.Linq.Expressions;
 

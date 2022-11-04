@@ -2,7 +2,7 @@
 using System;
 using eCommerce.Domain.Products;
 
-namespace eCommerce.Domain.Common
+namespace eCommerce.Domain.Core
 {
     public interface IRepository<TEntity>
         where TEntity : IEntity

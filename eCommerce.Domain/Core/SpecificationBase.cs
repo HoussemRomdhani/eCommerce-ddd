@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq.Expressions;
 
-namespace eCommerce.Domain.Common
+namespace eCommerce.Domain.Core
 {
     public abstract class SpecificationBase<T> : ISpecification<T>
     {
