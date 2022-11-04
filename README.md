@@ -1,2 +1,2 @@
-# DDD exemple
+# DDD example
 WIP ...
