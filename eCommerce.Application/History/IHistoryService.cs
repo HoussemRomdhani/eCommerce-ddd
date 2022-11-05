@@ -1,7 +1,6 @@
-﻿namespace eCommerce.Application.History
+﻿namespace eCommerce.Application.History;
+
+public interface IHistoryService
 {
-    public interface IHistoryService
-    {
-        HistoryDto GetHistory();
-    }
+    HistoryDto GetHistory();
 }

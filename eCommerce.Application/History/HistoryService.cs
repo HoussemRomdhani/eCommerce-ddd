@@ -3,29 +3,28 @@ using eCommerce.Domain.Core;
 using System;
 using System.Collections.Generic;
 
-namespace eCommerce.Application.History
+namespace eCommerce.Application.History;
+
+public class HistoryService : IHistoryService
 {
-    public class HistoryService : IHistoryService
+    IDomainEventRepository domainEventRepository;
+    private readonly IMapper _mapper;
+
+    public HistoryService(IDomainEventRepository domainEventRepository, IMapper mapper)
     {
-        IDomainEventRepository domainEventRepository;
-        private readonly IMapper _mapper;
+        this.domainEventRepository = domainEventRepository ?? throw new ArgumentNullException(nameof(domainEventRepository));
+        _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
+    }
 
-        public HistoryService(IDomainEventRepository domainEventRepository, IMapper mapper)
+    public HistoryDto GetHistory()
+    {
+        IEnumerable<DomainEventRecord> events = domainEventRepository.FindAll();
+
+        var history = new HistoryDto
         {
-            this.domainEventRepository = domainEventRepository ?? throw new ArgumentNullException(nameof(domainEventRepository));
-            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
-        }
+            Events = _mapper.Map<IEnumerable<DomainEventRecord>, List<EventDto>>(events)
+        };
 
-        public HistoryDto GetHistory()
-        {
-            IEnumerable<DomainEventRecord> events = domainEventRepository.FindAll();
-
-            HistoryDto history = new HistoryDto
-            {
-                Events = _mapper.Map<IEnumerable<DomainEventRecord>, List<EventDto>>(events)
-            };
-
-            return history;
-        }
+        return history;
     }
 }

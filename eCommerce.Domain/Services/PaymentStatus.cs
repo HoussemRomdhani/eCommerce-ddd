@@ -1,9 +1,8 @@
-﻿namespace eCommerce.Domain.Services
+﻿namespace eCommerce.Domain.Services;
+
+public enum PaymentStatus
 {
-    public enum PaymentStatus
-    {
-        OK = 100,
-        UnpaidBalance = 101,
-        NoActiveCreditCardAvailable = 102
-    }
+    OK = 100,
+    UnpaidBalance = 101,
+    NoActiveCreditCardAvailable = 102
 }

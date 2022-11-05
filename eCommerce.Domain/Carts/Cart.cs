@@ -1,4 +1,5 @@
-﻿using eCommerce.Domain.Core;
+﻿using eCommerce.Domain.Carts.Specifications;
+using eCommerce.Domain.Core;
 using eCommerce.Domain.Customers;
 using eCommerce.Domain.Products;
 using System;
@@ -6,78 +7,55 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 
-namespace eCommerce.Domain.Carts
+namespace eCommerce.Domain.Carts;
+public class Cart : IAggregateRoot
 {
-    public class Cart : IEntity
+    private List<CartProduct> _cartProducts = new();
+    public  Guid Id { get; protected set; }
+    public Guid CustomerId { get; protected set; }
+    public ReadOnlyCollection<CartProduct> Products => _cartProducts.AsReadOnly();
+    public decimal TotalCost => Products.Sum(cartProduct => cartProduct.Quantity * cartProduct.Cost);
+    public decimal TotalTax => Products.Sum(cartProducts => cartProducts.Tax);
+
+    public static Cart Create(Customer customer)
     {
-        private List<CartProduct> _cartProducts = new List<CartProduct>();
-        public  Guid Id { get; protected set; }
+        if (customer == null)
+            throw new ArgumentNullException(nameof(customer));
 
-        public ReadOnlyCollection<CartProduct> Products
+        var cart = new Cart
         {
-            get { return _cartProducts.AsReadOnly(); }
-        }
+            Id = Guid.NewGuid(),
+            CustomerId = customer.Id
+        };
 
-        public Guid CustomerId { get; protected set; }
+         DomainEvents.Raise(new CartCreated { Cart = cart });
 
-        public decimal TotalCost
-        {
-            get
-            {
-                return Products.Sum(cartProduct => cartProduct.Quantity * cartProduct.Cost);
-            }
-        }
+        return cart;
+    }
 
-        public decimal TotalTax
-        {
-            get
-            {
-                return Products.Sum(cartProducts => cartProducts.Tax);
-            }
-        }
+    public void Add(CartProduct cartProduct)
+    {
+        if (cartProduct == null)
+            throw new ArgumentNullException();
 
-        public static Cart Create(Customer customer)
-        {
-            if (customer == null)
-                throw new ArgumentNullException("customer");
+        DomainEvents.Raise(new ProductAddedCart() { CartProduct = cartProduct });
 
-            var cart = new Cart
-            {
-                Id = Guid.NewGuid(),
-                CustomerId = customer.Id
-            };
+        _cartProducts.Add(cartProduct);
+    }
+    public void Remove(Product product)
+    {
+        if (product == null)
+            throw new ArgumentNullException("product");
 
-            // DomainEvents.Raise<CartCreated>(new CartCreated() { Cart = cart });
+        CartProduct cartProduct =
+           _cartProducts.Find(new ProductInCartSpec(product).IsSatisfiedBy);
 
-            return cart;
-        }
+        DomainEvents.Raise<ProductRemovedCart>(new ProductRemovedCart() { CartProduct = cartProduct });
 
-        public void Add(CartProduct cartProduct)
-        {
-            if (cartProduct == null)
-                throw new ArgumentNullException();
-
-            //    DomainEvents.Raise<ProductAddedCart>(new ProductAddedCart() { CartProduct = cartProduct });
-
-            _cartProducts.Add(cartProduct);
-        }
-
-        public void Remove(Product product)
-        {
-            if (product == null)
-                throw new ArgumentNullException("product");
-
-            //CartProduct cartProduct =
-            //   cartProducts.Find(new ProductInCartSpec(product).IsSatisfiedBy);
-
-            // DomainEvents.Raise<ProductRemovedCart>(new ProductRemovedCart() { CartProduct = cartProduct });
-
-            //  cartProducts.Remove(cartProduct);
-        }
-
-        public void Clear()
-        {
-            _cartProducts.Clear();
-        }
+        _cartProducts.Remove(cartProduct);
+    }
+    public void Clear()
+    {
+        _cartProducts.Clear();
     }
 }

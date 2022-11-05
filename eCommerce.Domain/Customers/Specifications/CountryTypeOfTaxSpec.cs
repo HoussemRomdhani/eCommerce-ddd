@@ -3,42 +3,41 @@ using eCommerce.Domain.Tax;
 using System;
 using System.Linq.Expressions;
 
-namespace eCommerce.Domain.Customers.Specifications
+namespace eCommerce.Domain.Customers.Specifications;
+
+public class CountryTypeOfTaxSpec : SpecificationBase<CountryTax>
 {
-    public class CountryTypeOfTaxSpec : SpecificationBase<CountryTax>
+    private readonly Guid countryId;
+    private readonly TaxType taxType;
+
+    public CountryTypeOfTaxSpec(Guid countryId, TaxType taxType)
     {
-        private readonly Guid countryId;
-        private readonly TaxType taxType;
+        this.countryId = countryId;
+        this.taxType = taxType;
+    }
 
-        private CountryTypeOfTaxSpec(Guid countryId, TaxType taxType)
+    public static CountryTypeOfTaxSpec Create(Guid countryId, TaxType taxType) => new CountryTypeOfTaxSpec(countryId, taxType);
+
+    public override Expression<Func<CountryTax, bool>> Criteria
+    {
+        get
         {
-            this.countryId = countryId;
-            this.taxType = taxType;
+            return countryTax => countryTax.Country.Id == countryId && countryTax.Type == taxType;
         }
+    }
 
-        public static CountryTypeOfTaxSpec Create(Guid countryId, TaxType taxType) => new CountryTypeOfTaxSpec(countryId, taxType);
+    public override bool Equals(object obj)
+    {
+        var countryTypeOfTaxSpecCompare = obj as CountryTypeOfTaxSpec;
 
-        public override Expression<Func<CountryTax, bool>> Criteria
-        {
-            get
-            {
-                return countryTax => countryTax.Country.Id == countryId && countryTax.Type == taxType;
-            }
-        }
+        if (countryTypeOfTaxSpecCompare == null)
+            throw new InvalidCastException("obj");
 
-        public override bool Equals(object obj)
-        {
-            var countryTypeOfTaxSpecCompare = obj as CountryTypeOfTaxSpec;
+        return countryTypeOfTaxSpecCompare.countryId == countryId && countryTypeOfTaxSpecCompare.taxType == taxType;
+    }
 
-            if (countryTypeOfTaxSpecCompare == null)
-                throw new InvalidCastException("obj");
-
-            return countryTypeOfTaxSpecCompare.countryId == countryId && countryTypeOfTaxSpecCompare.taxType == taxType;
-        }
-
-        public override int GetHashCode()
-        {
-            return HashCode.Combine(Criteria, countryId, taxType, Criteria);
-        }
+    public override int GetHashCode()
+    {
+        return HashCode.Combine(Criteria, countryId, taxType, Criteria);
     }
 }

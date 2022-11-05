@@ -1,9 +1,8 @@
 ﻿using System.Collections.Generic;
 
-namespace eCommerce.Application.History
+namespace eCommerce.Application.History;
+
+public class HistoryDto
 {
-    public class HistoryDto
-    {
-        public List<EventDto> Events { get; set; }
-    }
+    public List<EventDto> Events { get; set; }
 }

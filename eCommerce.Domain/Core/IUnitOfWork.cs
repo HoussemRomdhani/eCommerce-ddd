@@ -1,10 +1,9 @@
 ﻿using System;
 
-namespace eCommerce.Domain.Core
+namespace eCommerce.Domain.Core;
+
+public interface IUnitOfWork : IDisposable
 {
-    public interface IUnitOfWork : IDisposable
-    {
-        void Commit();
-        void Rollback();
-    }
+    void Commit();
+    void Rollback();
 }

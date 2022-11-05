@@ -1,10 +1,8 @@
-﻿namespace eCommerce.Domain.Carts
+﻿namespace eCommerce.Domain.Carts;
+public enum CheckOutIssue
 {
-    public enum CheckOutIssue
-    {
-        UnpaidBalance = 101,
-        NoActiveCreditCardAvailable = 102,
-        ProductNotInStock = 201,
-        ProductIsFaulty = 202,
-    }
+    UnpaidBalance = 101,
+    NoActiveCreditCardAvailable = 102,
+    ProductNotInStock = 201,
+    ProductIsFaulty = 202,
 }

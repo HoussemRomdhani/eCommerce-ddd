@@ -1,9 +1,8 @@
-﻿namespace eCommerce.Domain.Services
+﻿namespace eCommerce.Domain.Services;
+
+public enum ProductState
 {
-    public enum ProductState
-    {
-        OK = 200,
-        NotInStock = 201,
-        IsFaulty = 202
-    }
+    OK = 200,
+    NotInStock = 201,
+    IsFaulty = 202
 }

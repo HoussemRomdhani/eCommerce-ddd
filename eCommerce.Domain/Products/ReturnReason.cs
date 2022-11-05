@@ -1,8 +1,7 @@
-﻿namespace eCommerce.Domain.Products
+﻿namespace eCommerce.Domain.Products;
+
+public enum ReturnReason
 {
-    public enum ReturnReason
-    {
-        Faulty,
-        NoReason
-    }
+    Faulty,
+    NoReason
 }

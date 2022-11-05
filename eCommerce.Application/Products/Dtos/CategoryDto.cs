@@ -1,10 +1,9 @@
 ﻿using System;
 
-namespace eCommerce.Application.Products.Dtos
+namespace eCommerce.Application.Products.Dtos;
+
+public class CategoryDto
 {
-    public class CategoryDto
-    {
-        public Guid Id { get; set; }
-        public string Name { get; set; }
-    }
+    public Guid Id { get; set; }
+    public string Name { get; set; }
 }

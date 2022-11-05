@@ -1,12 +1,11 @@
 ﻿using System;
 
-namespace eCommerce.Application.Customers
+namespace eCommerce.Application.Customers;
+
+public class CreditCardDto
 {
-    public class CreditCardDto
-    {
-        public Guid Id { get; set; }
-        public string NameOnCard { get; set; }
-        public string CardNumber { get; set; }
-        public DateTime Expiry { get; set; }
-    }
+    public Guid Id { get; set; }
+    public string NameOnCard { get; set; }
+    public string CardNumber { get; set; }
+    public DateTime Expiry { get; set; }
 }

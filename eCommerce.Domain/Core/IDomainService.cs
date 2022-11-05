@@ -1,6 +1,5 @@
-﻿namespace eCommerce.Domain.Core
+﻿namespace eCommerce.Domain.Core;
+
+public interface IDomainService
 {
-    public interface IDomainService
-    {
-    }
 }

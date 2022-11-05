@@ -2,23 +2,22 @@
 using System;
 using System.Linq.Expressions;
 
-namespace eCommerce.Domain.Purchases.Specifications
+namespace eCommerce.Domain.Purchases.Specifications;
+
+public class PurchasedNProductsSpec : SpecificationBase<Purchase>
 {
-    public class PurchasedNProductsSpec : SpecificationBase<Purchase>
+   private readonly int _nProducts;
+
+    public PurchasedNProductsSpec(int nProducts)
     {
-       private readonly int nProducts;
+        _nProducts = nProducts;
+    }
 
-        public PurchasedNProductsSpec(int nProducts)
+    public override Expression<Func<Purchase, bool>> Criteria
+    {
+        get
         {
-            this.nProducts = nProducts;
-        }
-
-        public override Expression<Func<Purchase, bool>> Criteria
-        {
-            get
-            {
-                return purchase => purchase.Products.Count >= nProducts;
-            }
+            return purchase => purchase.Products.Count >= _nProducts;
         }
     }
 }

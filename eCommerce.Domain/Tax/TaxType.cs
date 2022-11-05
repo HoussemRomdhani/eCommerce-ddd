@@ -1,8 +1,7 @@
-﻿namespace eCommerce.Domain.Tax
+﻿namespace eCommerce.Domain.Tax;
+
+public enum TaxType
 {
-    public enum TaxType
-    {
-        Business,
-        Customer
-    }
+    Business,
+    Customer
 }

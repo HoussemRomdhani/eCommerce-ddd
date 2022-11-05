@@ -2,23 +2,22 @@
 using System;
 using System.Linq.Expressions;
 
-namespace eCommerce.Domain.Customers.Specifications
+namespace eCommerce.Domain.Customers.Specifications;
+
+public class CustomerRegisteredSpec : SpecificationBase<Customer>
 {
-    public class CustomerRegisteredSpec : SpecificationBase<Customer>
+   private readonly Guid id;
+
+    public CustomerRegisteredSpec(Guid id)
     {
-       private readonly Guid id;
+        this.id = id;
+    }
 
-        public CustomerRegisteredSpec(Guid id)
+    public override Expression<Func<Customer, bool>> Criteria
+    {
+        get
         {
-            this.id = id;
-        }
-
-        public override Expression<Func<Customer, bool>> Criteria
-        {
-            get
-            {
-                return customer => customer.Id == id;
-            }
+            return customer => customer.Id == id;
         }
     }
 }

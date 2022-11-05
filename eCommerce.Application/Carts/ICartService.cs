@@ -1,12 +1,11 @@
 ﻿using System;
 
-namespace eCommerce.Application.Carts
+namespace eCommerce.Application.Carts;
+
+public interface ICartService
 {
-    public interface ICartService
-    {
-        CartDto Add(Guid customerId, CartProductDto cartProductDto);
-        CartDto Remove(Guid customerId, Guid productId);
-        CartDto Get(Guid customerId);
-        CheckOutResultDto CheckOut(Guid customerId);
-    }
+    CartDto Add(Guid customerId, CartProductDto cartProductDto);
+    CartDto Remove(Guid customerId, Guid productId);
+    CartDto Get(Guid customerId);
+    CheckOutResultDto CheckOut(Guid customerId);
 }

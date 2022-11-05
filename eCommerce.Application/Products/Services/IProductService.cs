@@ -4,14 +4,13 @@ using LanguageExt;
 using System;
 using System.Collections.Generic;
 
-namespace eCommerce.Application.Products.Services
+namespace eCommerce.Application.Products.Services;
+
+public interface IProductService
 {
-    public interface IProductService
-    {
-        IReadOnlyList<Product> GetAllProducts();
-        Option<ProductDto> Get(Guid id);
-        ProductDto Add(ProductDto product);
-        void Update(ProductForUpdateDto product);
-        void Remove(Guid id);
-    }
+    IReadOnlyList<Product> GetAllProducts();
+    Option<ProductDto> Get(Guid id);
+    ProductDto Add(ProductDto product);
+    void Update(ProductForUpdateDto product);
+    void Remove(Guid id);
 }

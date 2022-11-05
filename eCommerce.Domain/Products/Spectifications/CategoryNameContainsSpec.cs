@@ -2,27 +2,26 @@
 using System;
 using System.Linq.Expressions;
 
-namespace eCommerce.Domain.Products.Spectifications
+namespace eCommerce.Domain.Products.Spectifications;
+
+public class CategoryNameContainsSpec : SpecificationBase<Category>
 {
-    public class CategoryNameContainsSpec : SpecificationBase<Category>
+    private readonly string _categoryName;
+    private CategoryNameContainsSpec(string categoryName)
     {
-        private readonly string _categoryName;
-        private CategoryNameContainsSpec(string categoryName)
-        {
-            _categoryName = categoryName;
-        }
+        _categoryName = categoryName;
+    }
 
-        public static ISpecification<Category> Create(string categoryName)
-        {
-            return new CategoryNameContainsSpec(categoryName);
-        }
+    public static ISpecification<Category> Create(string categoryName)
+    {
+        return new CategoryNameContainsSpec(categoryName);
+    }
 
-        public override Expression<Func<Category, bool>> Criteria
+    public override Expression<Func<Category, bool>> Criteria
+    {
+        get
         {
-            get
-            {
-                return category => category.Name.TrimEnd() == _categoryName;
-            }
+            return category => category.Name.TrimEnd() == _categoryName;
         }
     }
 }

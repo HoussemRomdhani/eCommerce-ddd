@@ -5,31 +5,31 @@ using eCommerce.Domain.Products;
 using eCommerce.Domain.Tax;
 using System;
 
-namespace eCommerce.Domain.Services
+namespace eCommerce.Domain.Services;
+
+public class TaxService : IDomainService
 {
-    public class TaxService : IDomainService
+    private readonly Settings _settings;
+    private readonly IRepository<CountryTax> _countryTaxRepository;
+
+    public TaxService(Settings settings, IRepository<CountryTax> countryTaxRepository)
     {
-        private readonly IRepository<CountryTax> _countryTaxRepository;
-        private readonly Settings _settings;
+        _settings = settings ?? throw new ArgumentNullException(nameof(settings));
+        _countryTaxRepository = countryTaxRepository ?? throw new ArgumentNullException(nameof(countryTaxRepository));
+    }
 
-        public TaxService(Settings settings, IRepository<CountryTax> countryTaxRepository)
-        {
-            _countryTaxRepository = countryTaxRepository ?? throw new ArgumentNullException(nameof(countryTaxRepository));
-            _settings = settings ?? throw new ArgumentNullException(nameof(settings));
-        }
+    public decimal Calculate(Customer customer, Product product)
+    {
+        if (customer == null)
+            throw new ArgumentNullException(nameof(customer));
 
-        public decimal Calculate(Customer customer, Product product)
-        {
-            if (customer == null)
-                throw new ArgumentNullException("customer");
+        if (product == null)
+            throw new ArgumentNullException(nameof(product));
 
-            if (product == null)
-                throw new ArgumentNullException("product");
+        var customerCountryTax = _countryTaxRepository.FindOne(CountryTypeOfTaxSpec.Create(customer.CountryId, TaxType.Customer));
 
-            var customerCountryTax = _countryTaxRepository.FindOne(CountryTypeOfTaxSpec.Create(customer.CountryId, TaxType.Customer));
-            var businessCountryTax = _countryTaxRepository.FindOne(CountryTypeOfTaxSpec.Create(_settings.BusinessCountry.Id, TaxType.Business));
+        var businessCountryTax = _countryTaxRepository.FindOne(CountryTypeOfTaxSpec.Create(_settings.BusinessCountry.Id, TaxType.Business));
 
-           return (product.Cost * customerCountryTax.Percentage) + (product.Cost * businessCountryTax.Percentage);
-        }
+        return (product.Cost * customerCountryTax.Percentage) + (product.Cost * businessCountryTax.Percentage);
     }
 }

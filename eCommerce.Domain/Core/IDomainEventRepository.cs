@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 
-namespace eCommerce.Domain.Core
+namespace eCommerce.Domain.Core;
+
+public interface IDomainEventRepository
 {
-    public interface IDomainEventRepository
-    {
-        void Add<TDomainEvent>(TDomainEvent domainEvent) where TDomainEvent : DomainEvent;
-        IEnumerable<DomainEventRecord> FindAll();
-    }
+    void Add<TDomainEvent>(TDomainEvent domainEvent) where TDomainEvent : DomainEvent;
+    IEnumerable<DomainEventRecord> FindAll();
 }
