@@ -1,6 +1,9 @@
 ﻿using AutoMapper;
-using eCommerce.Application.Carts;
-using eCommerce.Application.Customers;
+using eCommerce.Application.Carts.Dtos;
+using eCommerce.Application.Carts.Dtos.Requests;
+using eCommerce.Application.Carts.Dtos.Responses;
+using eCommerce.Application.Customers.Dtos.Requests;
+using eCommerce.Application.Customers.Dtos.Responses;
 using eCommerce.Application.Products.Dtos;
 using eCommerce.Domain.Carts;
 using eCommerce.Domain.Customers;
@@ -13,25 +16,19 @@ namespace eCommerce.Application
     {
         public Map()
         {
-            CreateMap<Cart, CartDto>();
-            CreateMap<CartProduct, CartProductDto>();
+            CreateMap<Cart, CartResponseDto>();
+            CreateMap<CartProduct, AddProductToCartRequest>();
 
-            CreateMap<Purchase, CheckOutResultDto>()
+            CreateMap<Purchase, CheckoutResultDto>()
                 .ForMember(x => x.PurchaseId,
                            options => options.MapFrom(x => x.Id));
 
-          CreateMap<CreditCard, CreditCardDto>();
-          CreateMap<Customer, CustomerDto>();
+            CreateMap<CreditCard, CreateCreditCardRequest>();
+            CreateMap<Customer, CustomerDto>();
+            CreateMap<Product, ProductDto>();
 
-          CreateMap<Product, ProductDto>()
-                .ForMember(x => x.CategoryId,
-                           options => options.MapFrom(x => x.Category.Id))
-                 .ForMember(x => x.CategoryName,
-                           options => options.MapFrom(x => x.Category.Name));
-
-            CreateMap<Category, Category>();
             CreateMap<CustomerPurchaseHistoryReadModel, CustomerPurchaseHistoryDto>();
-       //   CreateMap<DomainEventRecord, EventDto>();
-        } 
+            //   CreateMap<DomainEventRecord, EventDto>();
+        }
     }
 }

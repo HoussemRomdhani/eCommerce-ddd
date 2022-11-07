@@ -1,6 +1,6 @@
-﻿using eCommerce.Domain.Core;
-using System.Linq.Expressions;
+﻿using System.Linq.Expressions;
 using System;
+using eCommerce.Domain.SharedKernel.Specifications;
 
 namespace eCommerce.Domain.Tax.Specifications;
 

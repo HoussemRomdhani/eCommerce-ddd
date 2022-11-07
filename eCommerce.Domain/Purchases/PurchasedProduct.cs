@@ -1,12 +1,11 @@
 ﻿using eCommerce.Domain.Carts;
-using eCommerce.Domain.Core;
+using eCommerce.Domain.SharedKernel;
 using System;
 
 namespace eCommerce.Domain.Purchases;
 
-public class PurchasedProduct : IAggregateRoot
+public class PurchasedProduct : EntityBase, IAggregateRoot
 {
-    public Guid Id { get; protected set; }
     public Guid ProductId { get; protected set; }
     public int Quantity { get; protected set; }
 

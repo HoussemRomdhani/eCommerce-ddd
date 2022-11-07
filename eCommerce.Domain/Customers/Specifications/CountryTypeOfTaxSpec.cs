@@ -1,4 +1,4 @@
-﻿using eCommerce.Domain.Core;
+﻿using eCommerce.Domain.SharedKernel.Specifications;
 using eCommerce.Domain.Tax;
 using System;
 using System.Linq.Expressions;

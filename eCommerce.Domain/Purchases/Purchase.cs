@@ -2,15 +2,14 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System;
-using eCommerce.Domain.Core;
+using eCommerce.Domain.SharedKernel;
 
 namespace eCommerce.Domain.Purchases;
 
-public class Purchase : IAggregateRoot
+public class Purchase : EntityBase, IAggregateRoot
 {
-    private List<PurchasedProduct> purchasedProducts = new List<PurchasedProduct>();
+    private List<PurchasedProduct> purchasedProducts = new();
 
-    public Guid Id { get; protected set; }
     public ReadOnlyCollection<PurchasedProduct> Products
     {
         get { return purchasedProducts.AsReadOnly(); }
@@ -37,7 +36,6 @@ public class Purchase : IAggregateRoot
         foreach (CartProduct cartProduct in cart.Products)
         {
             var purchaseProduct = PurchasedProduct.Create(purchase, cartProduct);
-
             purchasedProducts.Add(purchaseProduct);
         }
 

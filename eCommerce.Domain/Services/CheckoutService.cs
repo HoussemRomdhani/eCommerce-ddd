@@ -4,21 +4,25 @@ using eCommerce.Domain.Products;
 using eCommerce.Domain.Purchases;
 using eCommerce.Domain.Products.Spectifications;
 using System;
-using eCommerce.Domain.Core;
+using eCommerce.Domain.SharedKernel;
+using eCommerce.Domain.SharedKernel.Repositories;
+using System.Threading.Tasks;
+using eCommerce.Domain.SharedKernel.Results;
+using eCommerce.Domain.Common.DomainErrors;
 
 namespace eCommerce.Domain.Services;
 
 public class CheckoutService : IDomainService
 {
-    private readonly IRepository<Purchase> _purchaseRepository;
-    private readonly IRepository<Product> _productRepository;
-    public CheckoutService(IRepository<Purchase> purchaseRepository, IRepository<Product> productRepository)
+    private readonly IRepositoryBase<Purchase> _purchaseRepository;
+    private readonly IReadRepositoryBase<Product> _productRepository;
+    public CheckoutService(IRepositoryBase<Purchase> purchaseRepository, IReadRepositoryBase<Product> productRepository)
     {
         _purchaseRepository = purchaseRepository ?? throw new ArgumentNullException(nameof(purchaseRepository));
         _productRepository = productRepository ?? throw new ArgumentNullException(nameof(productRepository));
     }
 
-    public PaymentStatus CustomerCanPay(Customer customer)
+    public static PaymentStatus CustomerCanPay(Customer customer)
     {
         if (customer.Balance < 0)
             return PaymentStatus.UnpaidBalance;
@@ -29,16 +33,16 @@ public class CheckoutService : IDomainService
         return PaymentStatus.OK;
     }
 
-    public ProductState ProductCanBePurchased(Cart cart)
+    public async Task<Result<ProductState>> ProductCanBePurchasedAsync(Cart cart)
     {
-        ISpecification<Product> faultyProductSpec = new ProductReturnReasonSpec(ReturnReason.Faulty);
+        var faultyProductSpec = new ProductReturnReasonSpec(ReturnReason.Faulty);
 
         foreach (CartProduct cartProduct in cart.Products)
         {
-            Product product = _productRepository.FindById(cartProduct.ProductId);
+            var product = await _productRepository.GetByIdAsync(cartProduct.ProductId);
 
-            if (product == null)
-                throw new Exception($"Product {cartProduct.ProductId} not found");
+            if (product is null)
+                return Result.Failure<ProductState>(DomainErrors.Product.ProductNotFound(cartProduct.ProductId));
 
             bool isInStock = new ProductIsInStockSpec(cartProduct).IsSatisfiedBy(product);
 
@@ -50,40 +54,41 @@ public class CheckoutService : IDomainService
             if (isFaulty)
                 return ProductState.IsFaulty;
         }
+
         return ProductState.OK;
     }
 
-    public CheckOutIssue? CanCheckOut(Customer customer, Cart cart)
+    public async Task<Result<CheckOutIssue?>> CanCheckoutAsync(Customer customer, Cart cart)
     {
         var paymentStatus = CustomerCanPay(customer);
 
         if (paymentStatus != PaymentStatus.OK)
             return (CheckOutIssue)paymentStatus;
 
-        var productState = ProductCanBePurchased(cart);
+        var productStateResult = await ProductCanBePurchasedAsync(cart);
 
-        if (productState != ProductState.OK)
-            return (CheckOutIssue)productState;
+        if (productStateResult.IsFailure)
+            return Result.Failure<CheckOutIssue?>(productStateResult.Error);
+
+        var value = productStateResult.Value;
+
+        if (value != ProductState.OK)
+            return (CheckOutIssue)value;
 
         return null;
     }
 
-    public Purchase Checkout(Customer customer, Cart cart)
+    public Purchase Checkout(Cart cart)
     {
-        CheckOutIssue? checkoutIssue = CanCheckOut(customer, cart);
+        var result = Purchase.Create(cart);
 
-        if (checkoutIssue.HasValue)
-            throw new Exception(checkoutIssue.Value.ToString());
-
-        Purchase purchase = Purchase.Create(cart);
-
-        _purchaseRepository.Add(purchase);
+        _purchaseRepository.AddAsync(result);
 
         cart.Clear();
 
-        DomainEvents.Raise(new CustomerCheckedOut { Purchase = purchase });
+        _purchaseRepository.SaveChangesAsync();
 
-        return purchase;
+        return result;
     }
 
 }

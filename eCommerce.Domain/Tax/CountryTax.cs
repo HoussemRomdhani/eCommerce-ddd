@@ -1,12 +1,11 @@
-﻿using eCommerce.Domain.Core;
-using eCommerce.Domain.Countries;
+﻿using eCommerce.Domain.Countries;
+using eCommerce.Domain.SharedKernel;
 using System;
 
 namespace eCommerce.Domain.Tax;
 
-public class CountryTax : IAggregateRoot
+public class CountryTax : EntityBase, IAggregateRoot
 {
-    public Guid Id { get; protected set; }
     public Country Country { get; protected set; }
     public decimal Percentage { get; protected set; }
     public TaxType Type { get; protected set; }
@@ -22,8 +21,6 @@ public class CountryTax : IAggregateRoot
             Percentage = percentage,
             Type = type
         };
-
-        DomainEvents.Raise(new CountryTaxCreated { CountryTax = countryTax });
 
         return countryTax;
     }

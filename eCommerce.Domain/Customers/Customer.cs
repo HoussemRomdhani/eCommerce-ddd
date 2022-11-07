@@ -3,15 +3,14 @@ using System.Collections.ObjectModel;
 using System;
 using eCommerce.Domain.Countries;
 using eCommerce.Domain.Customers.Specifications;
-using eCommerce.Domain.Core;
+using eCommerce.Domain.SharedKernel;
 
 namespace eCommerce.Domain.Customers;
 
-public class Customer : IAggregateRoot
+public class Customer : EntityBase, IAggregateRoot
 {
     private List<CreditCard> creditCards = new List<CreditCard>();
 
-    public Guid Id { get; protected set; }
     public string FirstName { get; protected set; }
     public string LastName { get; protected set; }
     public string Email { get; protected set; }
@@ -45,7 +44,7 @@ public class Customer : IAggregateRoot
             CountryId = country.Id
         };
 
-      DomainEvents.Raise(new CustomerCreated { Customer = customer });
+    //  DomainEvents.Raise(new CustomerCreated { Customer = customer });
 
         return customer;
     }
@@ -55,7 +54,6 @@ public class Customer : IAggregateRoot
         if (Email != email)
         {
             Email = email;
-            DomainEvents.Raise(new CustomerChangedEmail { Customer = this });
         }
     }
     public ReadOnlyCollection<CreditCard> GetCreditCardsAvailble()
@@ -65,7 +63,5 @@ public class Customer : IAggregateRoot
     public virtual void Add(CreditCard creditCard)
     {
         creditCards.Add(creditCard);
-
-       DomainEvents.Raise(new CreditCardAdded { CreditCard = creditCard });
     }
 }

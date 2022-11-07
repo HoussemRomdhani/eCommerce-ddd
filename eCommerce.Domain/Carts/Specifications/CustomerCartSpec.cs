@@ -1,24 +1,23 @@
-﻿using eCommerce.Domain.Core;
+﻿using eCommerce.Domain.SharedKernel.Specifications;
 using System;
 using System.Linq.Expressions;
 
-namespace eCommerce.Domain.Carts.Specifications
+namespace eCommerce.Domain.Carts.Specifications;
+
+public class CustomerCartSpec : SpecificationBase<Cart>
 {
-    public class CustomerCartSpec : SpecificationBase<Cart>
+    private readonly Guid customerId;
+
+    public CustomerCartSpec(Guid customerId)
     {
-        private readonly Guid customerId;
+        this.customerId = customerId;
+    }
 
-        public CustomerCartSpec(Guid customerId)
+    public override Expression<Func<Cart, bool>> Criteria
+    {
+        get
         {
-            this.customerId = customerId;
-        }
-
-        public override Expression<Func<Cart, bool>> Criteria
-        {
-            get
-            {
-                return cart => cart.CustomerId == customerId;
-            }
+            return cart => cart.CustomerId == customerId;
         }
     }
 }

@@ -1,12 +1,10 @@
-﻿using eCommerce.Domain.Core;
-using eCommerce.Domain.Customers;
+﻿using eCommerce.Domain.SharedKernel;
 using System;
 
 namespace eCommerce.Domain.Customers;
 
-public class CreditCard : IAggregateRoot
+public class CreditCard
 {
-    public Guid Id { get; protected set; }
     public string NameOnCard { get; protected set; }
     public string CardNumber { get; protected set; }
     public bool Active { get; protected set; }
@@ -28,7 +26,7 @@ public class CreditCard : IAggregateRoot
         if (DateTime.Now > expiry)
             throw new Exception("Credit card expiry can't be in the past");
 
-        CreditCard creditCard = new CreditCard
+        var creditCard = new CreditCard
         {
             Customer = customer,
             NameOnCard = name,
@@ -56,6 +54,6 @@ public class CreditCard : IAggregateRoot
 
     public override int GetHashCode()
     {
-        return HashCode.Combine(Id, NameOnCard, CardNumber, Active, Created, Expiry, Customer);
+        return HashCode.Combine(NameOnCard, CardNumber, Active, Created, Expiry, Customer);
     }
 }

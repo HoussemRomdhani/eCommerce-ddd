@@ -1,11 +1,10 @@
-﻿using eCommerce.Domain.Core;
+﻿using eCommerce.Domain.SharedKernel;
 using System;
 
 namespace eCommerce.Domain.Products;
 
-public class ProductCode : IAggregateRoot
+public class ProductCode : EntityBase, IAggregateRoot
 {
-    public Guid Id { get; protected set; }
     public string Name { get; protected set; }
 
     public static ProductCode Create(string name)
@@ -15,13 +14,11 @@ public class ProductCode : IAggregateRoot
 
     public static ProductCode Create(Guid id, string name)
     {
-        ProductCode productCode = new ProductCode()
+        var productCode = new ProductCode
         {
             Id = id,
             Name = name
         };
-
-        DomainEvents.Raise(new ProductCodeCreated { ProductCode = productCode });
 
         return productCode;
     }

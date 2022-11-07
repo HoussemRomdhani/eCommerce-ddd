@@ -1,4 +1,5 @@
 ﻿namespace eCommerce.Domain.Carts;
+
 public enum CheckOutIssue
 {
     UnpaidBalance = 101,

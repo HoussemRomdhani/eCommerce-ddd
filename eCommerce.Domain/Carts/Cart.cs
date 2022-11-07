@@ -1,61 +1,55 @@
 ﻿using eCommerce.Domain.Carts.Specifications;
-using eCommerce.Domain.Core;
+using eCommerce.Domain.Common.DomainErrors;
 using eCommerce.Domain.Customers;
 using eCommerce.Domain.Products;
+using eCommerce.Domain.SharedKernel;
+using eCommerce.Domain.SharedKernel.Results;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 
 namespace eCommerce.Domain.Carts;
-public class Cart : IAggregateRoot
+
+public class Cart : EntityBase, IAggregateRoot
 {
     private List<CartProduct> _cartProducts = new();
-    public  Guid Id { get; protected set; }
     public Guid CustomerId { get; protected set; }
     public ReadOnlyCollection<CartProduct> Products => _cartProducts.AsReadOnly();
     public decimal TotalCost => Products.Sum(cartProduct => cartProduct.Quantity * cartProduct.Cost);
     public decimal TotalTax => Products.Sum(cartProducts => cartProducts.Tax);
 
-    public static Cart Create(Customer customer)
+    public static Cart Create(Customer customer) => new()
     {
-        if (customer == null)
-            throw new ArgumentNullException(nameof(customer));
+        Id = Guid.NewGuid(),
+        CustomerId = customer.Id
+    };
 
-        var cart = new Cart
-        {
-            Id = Guid.NewGuid(),
-            CustomerId = customer.Id
-        };
-
-         DomainEvents.Raise(new CartCreated { Cart = cart });
-
-        return cart;
-    }
-
-    public void Add(CartProduct cartProduct)
+    public Result Add(CartProduct cartProduct)
     {
         if (cartProduct == null)
-            throw new ArgumentNullException();
-
-        DomainEvents.Raise(new ProductAddedCart() { CartProduct = cartProduct });
+            return Result.Failure(DomainErrors.Cart.CartProductIsNull);
 
         _cartProducts.Add(cartProduct);
+
+        return Result.Success();
     }
-    public void Remove(Product product)
+
+    public Result Remove(Product product)
     {
         if (product == null)
-            throw new ArgumentNullException("product");
+            return Result.Failure(DomainErrors.Cart.ProductInCartIsNull);
 
-        CartProduct cartProduct =
-           _cartProducts.Find(new ProductInCartSpec(product).IsSatisfiedBy);
-
-        DomainEvents.Raise<ProductRemovedCart>(new ProductRemovedCart() { CartProduct = cartProduct });
+        var cartProduct = _cartProducts.Find(new ProductInCartSpec(product).IsSatisfiedBy);
 
         _cartProducts.Remove(cartProduct);
+
+        return Result.Success();
     }
-    public void Clear()
+
+    public Result Clear()
     {
         _cartProducts.Clear();
+        return Result.Success();
     }
 }

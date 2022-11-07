@@ -8,4 +8,8 @@
     <PackageReference Include="Castle.Windsor" Version="5.1.2" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\eCommerce.Domain.SharedKernel\eCommerce.Domain.SharedKernel.csproj" />
+  </ItemGroup>
+
 </Project>

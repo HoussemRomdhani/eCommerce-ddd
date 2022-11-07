@@ -2,6 +2,8 @@
 using eCommerce.Domain.Products;
 using eCommerce.Domain.Services;
 using System;
+using System.Threading.Tasks;
+
 namespace eCommerce.Domain.Carts;
 
 public class CartProduct
@@ -14,14 +16,8 @@ public class CartProduct
     public decimal Cost { get; protected set; }
     public decimal Tax { get; protected set; }
 
-    public static CartProduct Create(Customer customer, Cart cart, Product product, int quantity, TaxService taxService)
+    public static async Task<CartProduct> CreateAsync(Customer customer, Cart cart, Product product, int quantity, TaxService taxService)
     {
-        if (cart == null) 
-            throw new ArgumentNullException(nameof(cart));
-
-        if (product == null) 
-            throw new ArgumentNullException(nameof(product));
-
         var cartProduct = new CartProduct
         {
             CustomerId = customer.Id,
@@ -30,7 +26,7 @@ public class CartProduct
             Quantity = quantity,
             Created = DateTime.Now,
             Cost = product.Cost,
-            Tax = taxService.Calculate(customer, product)
+            Tax = await  taxService.CalculateAsync(customer, product)
         };
 
         return cartProduct;

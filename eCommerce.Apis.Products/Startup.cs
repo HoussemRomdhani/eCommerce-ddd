@@ -1,10 +1,12 @@
 using eCommerce.Application;
-using eCommerce.Application.Products.Repositories;
-using eCommerce.Application.Products.Services;
+using eCommerce.Domain.Countries;
+using eCommerce.Domain.Customers.Repositories;
+using eCommerce.Domain.Services;
+using eCommerce.Domain.SharedKernel.Repositories;
+using eCommerce.Domain;
 using eCommerce.Infrastructure;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -24,21 +26,16 @@ public class Startup
     // This method gets called by the runtime. Use this method to add services to the container.
     public void ConfigureServices(IServiceCollection services)
     {
-        services.AddDbContext<CatalogContext>(options =>
-        {
-            options.UseSqlServer("Server=.;Database=Products_DB;Trusted_Connection=True;MultipleActiveResultSets=true");
-         //   options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
-        });
-
-        services.AddScoped<ICategoryRepository, CatalogRepository>();
-        services.AddScoped<IProductsRepository, CatalogRepository>();
-        services.AddScoped<IProductService, ProductService>();
-        services.AddScoped<ICategoryService, CategoryService>();
-     
-        services.AddAutoMapper(typeof(Map));
+        services.AddApplication();
+        services.AddScoped(typeof(IReadRepositoryBase<>), typeof(InMemoryReadRepository<>));
+        services.AddScoped(typeof(IRepositoryBase<>), typeof(InMemoryRepository<>));
+        services.AddScoped<CheckoutService>();
+        services.AddSingleton<TaxService>();
+        services.AddSingleton(x => new Settings(Country.Create("FRA")));
+        services.AddScoped<ICustomerRepository, InMemoryCustomerRepository>();
         services.AddSwaggerGen(c =>
         {
-            c.SwaggerDoc("v1", new OpenApiInfo { Title = "Products.API", Version = "v1" });
+            c.SwaggerDoc("v1", new OpenApiInfo { Title = "Cart.API", Version = "v1" });
         });
         services.AddControllers();
     }
@@ -51,10 +48,8 @@ public class Startup
             app.UseDeveloperExceptionPage();
         }
 
-        app.UseHttpsRedirection();
-
         app.UseSwagger();
-        app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Products.API v1"));
+        app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Cart.API v1"));
 
         app.UseRouting();
 
