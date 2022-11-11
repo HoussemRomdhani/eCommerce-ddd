@@ -18,4 +18,8 @@
     <ProjectReference Include="..\eCommerce.Domain\eCommerce.Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Products\Queries\" />
+  </ItemGroup>
+
 </Project>

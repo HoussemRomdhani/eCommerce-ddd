@@ -19,18 +19,11 @@ public class Product : EntityBase, IAggregateRoot
 
     public ReadOnlyCollection<Return> Returns => _returns.AsReadOnly();
 
-    public static Product Create(string name, int quantity, decimal cost, ProductCode productCode) =>
-                          Create(Guid.NewGuid(), name, quantity, cost, productCode);
-
-    public static Product Create(Guid id, 
-                                 string name, 
-                                 int quantity, 
-                                 decimal cost, 
-                                 ProductCode productCode)
+    public static Product Create(string name, int quantity, decimal cost, ProductCode productCode)
     {
         var product = new Product
         {
-            Id = id,
+            Id = Guid.NewGuid(),
             Name = name,
             Quantity = quantity,
             Created = DateTime.Now,
