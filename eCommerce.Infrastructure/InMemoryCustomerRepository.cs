@@ -70,6 +70,9 @@ namespace eCommerce.Infrastructure
             return Task.FromResult((IReadOnlyList<Customer>)_store.AsReadOnly()) ;
         }
 
-        
+        public Task<IEnumerable<CustomerPurchaseHistoryReadModel>> GetCustomersPurchaseHistoryAsync(CancellationToken cancellationToken = default)
+        {
+            return Task.FromResult(Enumerable.Empty<CustomerPurchaseHistoryReadModel>());
+        }
     }
 }

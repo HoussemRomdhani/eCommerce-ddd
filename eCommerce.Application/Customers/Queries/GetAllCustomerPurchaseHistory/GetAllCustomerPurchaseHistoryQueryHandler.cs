@@ -3,7 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using AutoMapper;
 using eCommerce.Application.Customers.Dtos.Responses;
 using MediatR;
 
@@ -12,20 +11,19 @@ namespace eCommerce.Application.Customers.Queries.GetAllCustomerPurchaseHistory;
 public class GetAllCustomerPurchaseHistoryQueryHandler : IRequestHandler<GetAllCustomerPurchaseHistoryQuery, List<CustomerPurchaseHistoryDto>>
 {
     private readonly ICustomerRepository _customerRepository;
-    private readonly IMapper _mapper;
 
-    public GetAllCustomerPurchaseHistoryQueryHandler(ICustomerRepository customerRepository, IMapper mapper)
+    public GetAllCustomerPurchaseHistoryQueryHandler(ICustomerRepository customerRepository)
     {
         _customerRepository = customerRepository ?? throw new ArgumentNullException(nameof(customerRepository));
-        _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
     }
 
-    public  Task<List<CustomerPurchaseHistoryDto>> Handle(GetAllCustomerPurchaseHistoryQuery request, CancellationToken cancellationToken)
+    public async Task<List<CustomerPurchaseHistoryDto>> Handle(GetAllCustomerPurchaseHistoryQuery request, 
+                                                               CancellationToken cancellationToken = default)
     {
-        var customersPurchaseHistory = _customerRepository.GetCustomersPurchaseHistory();
-        
-        var result = _mapper.Map<IEnumerable<CustomerPurchaseHistoryReadModel>, List<CustomerPurchaseHistoryDto>>(customersPurchaseHistory);
+        var customersPurchaseHistory = await _customerRepository.GetCustomersPurchaseHistoryAsync(cancellationToken);
 
-        return Task.FromResult(result);
+        var result = CustomerDtoMapper.MapToCollectionOfCustomerPurchaseHistoryDto(customersPurchaseHistory);  
+
+        return result;
     }
 }

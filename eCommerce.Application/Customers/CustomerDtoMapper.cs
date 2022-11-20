@@ -21,9 +21,31 @@ internal static class CustomerDtoMapper
         return dto;
     }
 
+    internal static CustomerPurchaseHistoryDto MapToCustomerPurchaseHistoryDto(CustomerPurchaseHistoryReadModel model)
+    {
+        var dto = new CustomerPurchaseHistoryDto
+        {
+            CustomerId = model.CustomerId,
+            FirstName = model.FirstName,
+            LastName = model.LastName,
+            TotalPurchases = model.TotalPurchases,
+            TotalProductsPurchased = model.TotalProductsPurchased,
+            TotalCost = model.TotalCost,
+
+        };
+
+        return dto;
+    }
+
+    internal static List<CustomerPurchaseHistoryDto> MapToCollectionOfCustomerPurchaseHistoryDto(IEnumerable<CustomerPurchaseHistoryReadModel> model)
+    {
+        return model.Select(x => MapToCustomerPurchaseHistoryDto(x)).ToList();
+    }
+
+
     internal static IEnumerable<CustomerResponseDto> MapToCollection(IReadOnlyList<Customer> customers)
     {
-       return customers.Select(customer => Map(customer));
+        return customers.Select(customer => Map(customer));
     }
 }
 
