@@ -1,30 +1,31 @@
-﻿using AutoMapper;
-using eCommerce.Application.Abstractions;
-using eCommerce.Application.Customers.Dtos.Responses;
+﻿using eCommerce.Application.Customers.Dtos.Responses;
 using eCommerce.Domain.Customers;
-using eCommerce.Domain.SharedKernel.Repositories;
+using eCommerce.Domain.SharedKernel.Errors;
 using eCommerce.Domain.SharedKernel.Results;
+using MediatR;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace eCommerce.Application.Customers.Queries.GetCustomerById;
 
-public sealed class GetCustomerByIdQueryHandler : IQueryHandler<GetCustomerByIdQuery, Result<CustomerDto>>
+public sealed class GetCustomerByIdQueryHandler : IRequestHandler<GetCustomerByIdQuery, Result<CustomerResponseDto>>
 {
-    private readonly IReadRepositoryBase<Customer> _customerRepository;
-    private readonly IMapper _mapper;
+    private readonly ICustomerRepository _customerRepository;
 
-    public GetCustomerByIdQueryHandler(IReadRepositoryBase<Customer> customerRepository, IMapper mapper)
+    public GetCustomerByIdQueryHandler(ICustomerRepository customerRepository)
     {
         _customerRepository = customerRepository ?? throw new ArgumentNullException(nameof(customerRepository));
-        _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
     }
-    public async Task<Result<CustomerDto>> Handle(GetCustomerByIdQuery request, CancellationToken cancellationToken)
-    {
-        var customer = await _customerRepository.GetByIdAsync(request.Id, cancellationToken);
 
-        var result = _mapper.Map<Customer, CustomerDto>(customer);
+    public async Task<Result<CustomerResponseDto>> Handle(GetCustomerByIdQuery request, CancellationToken cancellationToken)
+    {
+        var customer = await _customerRepository.GetCustomerByIdAsync(request.Id, cancellationToken);
+
+        if (customer is null)
+            return Result.Failure<CustomerResponseDto>(Error.NotFound("GetCustomerById", $"Customer with id '{request.Id}' not found.")) ;
+
+        var result = CustomerDtoMapper.Map(customer);
 
         return Result.Success(result);
     }

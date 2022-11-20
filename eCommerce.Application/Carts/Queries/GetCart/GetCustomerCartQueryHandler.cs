@@ -1,36 +1,31 @@
-﻿using eCommerce.Domain.Carts.Specifications;
-using eCommerce.Domain.Carts;
+﻿using eCommerce.Domain.Carts;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using AutoMapper;
-using eCommerce.Domain.SharedKernel.Repositories;
 using eCommerce.Domain.SharedKernel.Results;
 using eCommerce.Domain.Common.DomainErrors;
 using eCommerce.Application.Carts.Dtos.Responses;
-using eCommerce.Application.Abstractions;
+using MediatR;
 
 namespace eCommerce.Application.Carts.Queries.GetCart;
 
-public class GetCustomerCartQueryHandler : IQueryHandler<GetCustomerCartQuery, Result<CartResponseDto>>
+public sealed class GetCustomerCartQueryHandler : IRequestHandler<GetCustomerCartQuery, Result<CartResponseDto>>
 {
-    private readonly IReadRepositoryBase<Cart> _cartRepository;
-    private readonly IMapper _mapper;
+    private readonly ICartRepository _cartRepository;
 
-    public GetCustomerCartQueryHandler(IReadRepositoryBase<Cart> cartRepository, IMapper mapper)
+    public GetCustomerCartQueryHandler(ICartRepository cartRepository)
     {
         _cartRepository = cartRepository ?? throw new ArgumentNullException(nameof(cartRepository));
-        _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
     }
 
     public async Task<Result<CartResponseDto>> Handle(GetCustomerCartQuery request, CancellationToken cancellationToken)
     {
-        var cart = await _cartRepository.FirstOrDefaultAsync(new CustomerCartSpec(request.CustomerId), cancellationToken);
+        var cart = await _cartRepository.GetCartByCustomerIdAsync(request.CustomerId, cancellationToken);
 
         if (cart is null)
             return Result.Failure<CartResponseDto>(DomainErrors.Cart.CartNotFoundForCustomer(request.CustomerId));
 
-        var result = _mapper.Map<Cart, CartResponseDto>(cart);
+        var result = CartDtoMapper.MapToCartResponseDto(cart);
 
         return Result.Success(result);
     }

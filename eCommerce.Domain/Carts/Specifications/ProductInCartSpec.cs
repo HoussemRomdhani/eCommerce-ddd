@@ -1,7 +1,7 @@
 ﻿using eCommerce.Domain.Products;
-using System.Linq.Expressions;
-using System;
 using eCommerce.Domain.SharedKernel.Specifications;
+using System;
+using System.Linq.Expressions;
 
 namespace eCommerce.Domain.Carts.Specifications;
 

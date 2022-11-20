@@ -1,15 +1,14 @@
-﻿using eCommerce.Application.Abstractions;
-using eCommerce.Domain.Customers;
-using eCommerce.Domain.Customers.Repositories;
-using eCommerce.Domain.Customers.Specifications;
+﻿using eCommerce.Domain.Customers;
+using eCommerce.Domain.SharedKernel.Errors;
 using eCommerce.Domain.SharedKernel.Results;
+using MediatR;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace eCommerce.Application.Customers.Commands.UpdateCustomer;
 
-public class UpdateCustomerCommandHandler : ICommandHandler<UpdateCustomerCommand, Result>
+public sealed class UpdateCustomerCommandHandler : IRequestHandler<UpdateCustomerCommand, Result>
 {
     private readonly ICustomerRepository _customerRepository;
 
@@ -20,17 +19,21 @@ public class UpdateCustomerCommandHandler : ICommandHandler<UpdateCustomerComman
 
     public async Task<Result> Handle(UpdateCustomerCommand request, CancellationToken cancellationToken)
     {
-        if (request.Id == Guid.Empty)
-            throw new Exception("Id can't be empty");
+        var customer = await _customerRepository.GetCustomerByIdAsync(request.Id, cancellationToken);
 
-        var registeredSpec = new CustomerRegisteredSpec(request.Id);
+        if (customer is null)
+            return Result.Failure(Error.NotFound("CustomerNotFound", $"No such customer with '{request.Id}' exists"));
 
-        var customer = await _customerRepository.FirstOrDefaultAsync(registeredSpec, cancellationToken);
+        var existingCustomerWithEmail = await _customerRepository.GetCustomerByEmailAsync(request.Email, cancellationToken);
 
-        if (customer == null)
-            throw new Exception("No such customer exists");
+        if (existingCustomerWithEmail is not null && customer.Id != existingCustomerWithEmail.Id)
+            return Result.Failure(Error.Validation("EmailUnaivailable", $"No such email with '{request.Email}' available"));
 
-        customer.ChangeEmail(request.Customer.Email);
+        customer.ChangeFirstName(request.FirstName);
+        customer.ChangeLastName(request.LastName);
+        customer.ChangeEmail(request.Email);
+
+        _customerRepository.UpdateCustomerAsync(customer, cancellationToken);
 
         await _customerRepository.SaveChangesAsync(cancellationToken);
 

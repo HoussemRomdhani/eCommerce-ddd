@@ -6,5 +6,8 @@ public sealed class CreateProductCommandValidator : AbstractValidator<CreateProd
 {
 	public CreateProductCommandValidator()
 	{
-	}
+		RuleFor(x => x.Name).NotEmpty();
+        RuleFor(x => x.Cost).GreaterThan(0);
+        RuleFor(x => x.Quantity).GreaterThan(0);
+    }
 }

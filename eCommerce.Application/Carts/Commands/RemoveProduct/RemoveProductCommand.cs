@@ -1,18 +1,23 @@
-﻿using eCommerce.Application.Abstractions;
-using eCommerce.Application.Carts.Dtos;
-using eCommerce.Domain.SharedKernel.Results;
+﻿using eCommerce.Domain.SharedKernel.Results;
+using MediatR;
 using System;
 
 namespace eCommerce.Application.Carts.Commands.RemoveProduct;
 
-public sealed class RemoveProductCommand : ICommand<Result>
+public sealed class RemoveProductCommand : IRequest<Result>
 {
     public Guid CustomerId { get;}
+
     public Guid ProductId { get; }
 
-    public RemoveProductCommand(Guid customerId, Guid productId)
+    private RemoveProductCommand(Guid customerId, Guid productId)
     {
         CustomerId = customerId;
         ProductId = productId;
+    }
+
+    public static RemoveProductCommand Create(Guid customerId, Guid productId)
+    {
+        return new RemoveProductCommand(customerId, productId);
     }
 }

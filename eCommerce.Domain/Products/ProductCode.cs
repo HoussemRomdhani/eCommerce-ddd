@@ -1,25 +1,26 @@
 ﻿using eCommerce.Domain.SharedKernel;
 using System;
+using System.Collections.Generic;
 
 namespace eCommerce.Domain.Products;
 
-public class ProductCode : EntityBase, IAggregateRoot
+public class ProductCode : ValueObject
 {
+    public Guid Id { get; protected set; }
     public string Name { get; protected set; }
 
     public static ProductCode Create(string name)
     {
-        return Create(Guid.NewGuid(), name);
-    }
-
-    public static ProductCode Create(Guid id, string name)
-    {
-        var productCode = new ProductCode
+       return new ProductCode
         {
-            Id = id,
+            Id = Guid.NewGuid(),
             Name = name
         };
+    }
 
-        return productCode;
+    protected override IEnumerable<object> GetEqualityComponents()
+    {
+        yield return Id;
+        yield return Name;
     }
 }

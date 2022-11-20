@@ -1,21 +1,24 @@
-﻿using eCommerce.Application.Abstractions;
-using eCommerce.Domain.Products;
-using eCommerce.Domain.SharedKernel.Results;
+﻿using eCommerce.Domain.SharedKernel.Results;
+using MediatR;
+using System;
 
 namespace eCommerce.Application.Products.Commands.CreateProduct;
 
-public sealed class CreateProductCommand : ICommand<Result>
+public sealed class CreateProductCommand : IRequest<Result<Guid>>
 {
     public string Name { get;}
+    public decimal Cost { get; }
     public int Quantity { get;}
-    public decimal Cost { get;}
-    public ProductCode ProductCode { get;}
+    public string ProductCodeName { get;}
 
-    public CreateProductCommand(string name, int quantity, decimal cost, ProductCode productCode)
+    private CreateProductCommand(string name, int quantity, decimal cost, string productCodeName)
     {
         Name = name;
-        Quantity = quantity;
         Cost = cost;
-        ProductCode = productCode;
+        Quantity = quantity;
+        ProductCodeName = productCodeName;
     }
+
+    public static CreateProductCommand Create(string name, int quantity, decimal cost, string productCodeName) => 
+               new CreateProductCommand(name, quantity, cost, productCodeName);
 }

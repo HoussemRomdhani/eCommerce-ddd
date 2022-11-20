@@ -1,14 +1,13 @@
-﻿using eCommerce.Domain.Customers.Repositories;
-using eCommerce.Domain.Customers.Specifications;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
 using System;
-using eCommerce.Application.Abstractions;
 using eCommerce.Domain.SharedKernel.Results;
+using eCommerce.Domain.Customers;
+using MediatR;
 
 namespace eCommerce.Application.Customers.Queries.IsEmailAvailable;
 
-public sealed class IsEmailAvailableQueryHandler : IQueryHandler<IsEmailAvailableQuery, Result<bool>>
+public sealed class IsEmailAvailableQueryHandler : IRequestHandler<IsEmailAvailableQuery, Result<bool>>
 {
     private readonly ICustomerRepository _customerRepository;
 
@@ -19,9 +18,7 @@ public sealed class IsEmailAvailableQueryHandler : IQueryHandler<IsEmailAvailabl
 
     public async Task<Result<bool>> Handle(IsEmailAvailableQuery request, CancellationToken cancellationToken)
     {
-        var alreadyRegisteredSpec = new CustomerAlreadyRegisteredSpec(request.Email);
-
-        var existingCustomer = await _customerRepository.FirstOrDefaultAsync(alreadyRegisteredSpec, cancellationToken);
+        var existingCustomer = await _customerRepository.GetCustomerByEmailAsync(request.Email, cancellationToken);
 
         var isEmailAvailable = existingCustomer == null;
 

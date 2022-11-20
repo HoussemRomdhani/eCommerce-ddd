@@ -1,9 +1,12 @@
 ﻿using eCommerce.Application;
 using eCommerce.Domain;
+using eCommerce.Domain.Carts;
 using eCommerce.Domain.Countries;
-using eCommerce.Domain.Customers.Repositories;
+using eCommerce.Domain.Customers;
+using eCommerce.Domain.Products;
+using eCommerce.Domain.Purchases;
 using eCommerce.Domain.Services;
-using eCommerce.Domain.SharedKernel.Repositories;
+using eCommerce.Domain.Tax;
 using eCommerce.Infrastructure;
 using Microsoft.OpenApi.Models;
 
@@ -22,12 +25,16 @@ public class Startup
     public void ConfigureServices(IServiceCollection services)
     {
         services.AddApplication();
-        services.AddScoped(typeof(IReadRepositoryBase<>), typeof(InMemoryReadRepository<>));
-        services.AddScoped(typeof(IRepositoryBase<>), typeof(InMemoryRepository<>));
-        services.AddScoped<CheckoutService>();
-        services.AddScoped<TaxService>();
-        services.AddScoped(x => new Settings(Country.Create("FRA")));
-        services.AddScoped<ICustomerRepository, InMemoryCustomerRepository>();
+        services.AddSingleton<CheckoutService>();
+        services.AddSingleton<TaxService>();
+        services.AddSingleton(x => new Settings(Country.Create("FRA", "France")));
+        services.AddSingleton<ICustomerRepository, InMemoryCustomerRepository>();
+        services.AddSingleton<ICountryRepository, InMemoryCountryRepository>();
+        services.AddSingleton<IProductRepository, InMemoryProductRepository>();
+        services.AddSingleton<ICartRepository, InMemoryCartRepository>();
+        services.AddSingleton<ICountryTaxRepository, InMemoryCountryTaxRepository>();
+        services.AddSingleton<IPurchaseRepository, InMemoryPurchaseRepository>();
+
         services.AddSwaggerGen(c =>
         {
             c.SwaggerDoc("v1", new OpenApiInfo { Title = "Cart.API", Version = "v1" });

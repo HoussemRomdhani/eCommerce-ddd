@@ -9,15 +9,15 @@ public sealed class AddProductCommandValidator : AbstractValidator<AddProductCom
     public AddProductCommandValidator()
     {
         RuleFor(x => x.CustomerId).NotEmpty()
-                                  .WithError(ValidationErrors.AddProductToCartRequest.CustomerIdIsRequired);
+                                  .WithError(ValidationErrors.Cart.AddProductToCartRequest.CustomerIdIsRequired);
 
         RuleFor(x => x.CartProduct).NotNull()
-                                  .WithError(ValidationErrors.AddProductToCartRequest.ProductIsRequired);
+                                  .WithError(ValidationErrors.Cart.AddProductToCartRequest.ProductIsRequired);
 
         RuleFor(x => x.CartProduct.ProductId).NotEmpty()
-                                 .WithError(ValidationErrors.AddProductToCartRequest.ProductIdIsRequired);
+                                 .WithError(ValidationErrors.Cart.AddProductToCartRequest.ProductIdIsRequired);
 
         RuleFor(x => x.CartProduct.Quantity).GreaterThan(0)
-                                 .WithError(ValidationErrors.AddProductToCartRequest.QuantityMustBeGreaterThanZero);
+                                 .WithError(ValidationErrors.Cart.AddProductToCartRequest.QuantityMustBeGreaterThanZero);
     }
 }

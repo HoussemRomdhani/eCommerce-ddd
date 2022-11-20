@@ -9,7 +9,7 @@ public sealed class CheckoutCommandValidator : AbstractValidator<CheckoutCommand
     public CheckoutCommandValidator()
     {
         RuleFor(x => x.CustomerId).NotEmpty()
-                                  .WithError(ValidationErrors.Checkout.CustomerIdIsRequired);
+                                  .WithError(ValidationErrors.Cart.Checkout.CustomerIdIsRequired);
     }
 }
 

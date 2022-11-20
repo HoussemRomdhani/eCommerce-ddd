@@ -4,8 +4,9 @@ using System;
 
 namespace eCommerce.Domain.Purchases;
 
-public class PurchasedProduct : EntityBase, IAggregateRoot
+public class PurchasedProduct :  IAggregateRoot
 {
+    public Guid Id { get; protected set; }
     public Guid ProductId { get; protected set; }
     public int Quantity { get; protected set; }
 

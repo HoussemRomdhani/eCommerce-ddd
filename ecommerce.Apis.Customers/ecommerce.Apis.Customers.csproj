@@ -8,7 +8,6 @@
 
 	<ItemGroup>
 		<PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
-		<ProjectReference Include="..\ecommerce.Apis.Cart.Common\ecommerce.Apis.Common.csproj" />
 		<ProjectReference Include="..\eCommerce.Application\eCommerce.Application.csproj" />
 		<ProjectReference Include="..\eCommerce.Infrastructure\eCommerce.Infrastructure.csproj" />
 	</ItemGroup>

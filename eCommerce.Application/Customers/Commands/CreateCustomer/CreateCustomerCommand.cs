@@ -1,16 +1,26 @@
-﻿using eCommerce.Application.Abstractions;
-using eCommerce.Application.Customers.Dtos.Responses;
-using eCommerce.Domain.SharedKernel.Results;
+﻿using eCommerce.Domain.SharedKernel.Results;
+using MediatR;
 using System;
 
 namespace eCommerce.Application.Customers.Commands.CreateCustomer;
 
-public sealed class CreateCustomerCommand : ICommand<Result<Guid>>
+public sealed class CreateCustomerCommand : IRequest<Result<Guid>>
 {
-    public CustomerDto Customer { get; }
+    public string FirstName { get;}
+    public string LastName { get; }
+    public string Email { get; }
+    public string CountryCode { get;}
 
-	public CreateCustomerCommand(CustomerDto customer)
+	private CreateCustomerCommand(CreateCustomerRequestDto dto)
 	{
-		Customer = customer;
+		FirstName = dto.FirstName;
+		LastName = dto.LastName;
+		Email = dto.Email;
+		CountryCode = dto.CountryCode;
+    }
+
+    public static CreateCustomerCommand Create(CreateCustomerRequestDto dto)
+    {
+        return new CreateCustomerCommand(dto);
     }
 }

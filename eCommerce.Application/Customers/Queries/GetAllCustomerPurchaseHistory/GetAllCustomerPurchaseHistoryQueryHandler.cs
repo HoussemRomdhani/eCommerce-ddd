@@ -1,16 +1,15 @@
-﻿using eCommerce.Domain.Customers.Repositories;
-using eCommerce.Domain.Customers;
+﻿using eCommerce.Domain.Customers;
 using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
-using eCommerce.Application.Abstractions;
 using eCommerce.Application.Customers.Dtos.Responses;
+using MediatR;
 
 namespace eCommerce.Application.Customers.Queries.GetAllCustomerPurchaseHistory;
 
-public class GetAllCustomerPurchaseHistoryQueryHandler : IQueryHandler<GetAllCustomerPurchaseHistoryQuery, List<CustomerPurchaseHistoryDto>>
+public class GetAllCustomerPurchaseHistoryQueryHandler : IRequestHandler<GetAllCustomerPurchaseHistoryQuery, List<CustomerPurchaseHistoryDto>>
 {
     private readonly ICustomerRepository _customerRepository;
     private readonly IMapper _mapper;

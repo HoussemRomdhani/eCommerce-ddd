@@ -6,7 +6,7 @@ using eCommerce.Domain.SharedKernel;
 
 namespace eCommerce.Domain.Purchases;
 
-public class Purchase : EntityBase, IAggregateRoot
+public class Purchase : IAggregateRoot
 {
     private List<PurchasedProduct> purchasedProducts = new();
 
@@ -15,6 +15,7 @@ public class Purchase : EntityBase, IAggregateRoot
         get { return purchasedProducts.AsReadOnly(); }
     }
 
+    public Guid Id { get; protected set; }
     public DateTime Created { get; protected set; }
     public Guid CustomerId { get; protected set; }
     public decimal TotalTax { get; protected set; }

@@ -4,7 +4,7 @@ using eCommerce.Application.Carts.Dtos.Requests;
 using eCommerce.Application.Carts.Dtos.Responses;
 using eCommerce.Application.Customers.Dtos.Requests;
 using eCommerce.Application.Customers.Dtos.Responses;
-using eCommerce.Application.Products.Dtos;
+using eCommerce.Application.Products.Dtos.Requests;
 using eCommerce.Domain.Carts;
 using eCommerce.Domain.Customers;
 using eCommerce.Domain.Products;
@@ -24,8 +24,8 @@ namespace eCommerce.Application
                            options => options.MapFrom(x => x.Id));
 
             CreateMap<CreditCard, CreateCreditCardRequest>();
-            CreateMap<Customer, CustomerDto>();
-            CreateMap<Product, ProductDto>();
+        //    CreateMap<Customer, CustomerResponseDto>();
+            CreateMap<Product, CreateProductRequestDto>();
 
             CreateMap<CustomerPurchaseHistoryReadModel, CustomerPurchaseHistoryDto>();
             //   CreateMap<DomainEventRecord, EventDto>();

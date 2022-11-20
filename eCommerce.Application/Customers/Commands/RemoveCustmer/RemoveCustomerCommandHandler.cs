@@ -1,14 +1,14 @@
-﻿using eCommerce.Application.Abstractions;
-using eCommerce.Domain.Customers.Repositories;
-using eCommerce.Domain.Customers.Specifications;
+﻿using eCommerce.Domain.Customers;
+using eCommerce.Domain.SharedKernel.Errors;
 using eCommerce.Domain.SharedKernel.Results;
+using MediatR;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace eCommerce.Application.Customers.Commands.RemoveCustmer;
 
-public class RemoveCustomerCommandHandler : ICommandHandler<RemoveCustomerCommand, Result>
+public class RemoveCustomerCommandHandler : IRequestHandler<RemoveCustomerCommand, Result>
 {
     private readonly ICustomerRepository _customerRepository;
 
@@ -19,14 +19,12 @@ public class RemoveCustomerCommandHandler : ICommandHandler<RemoveCustomerComman
 
     public async Task<Result> Handle(RemoveCustomerCommand request, CancellationToken cancellationToken)
     {
-        var registeredSpec = new CustomerRegisteredSpec(request.Id);
+        var customer = await _customerRepository.GetCustomerByIdAsync(request.Id, cancellationToken);
 
-        var customer = await _customerRepository.FirstOrDefaultAsync(registeredSpec, cancellationToken);
+        if (customer is null)
+            return Result.Failure(Error.NotFound("CustomerNotFound", $"No such customer with '{request.Id}' exists"));
 
-        if (customer == null)
-            throw new Exception("No such customer exists");
-
-        await _customerRepository.DeleteAsync(customer, cancellationToken);
+        await _customerRepository.DeleteCustomerAsync(customer, cancellationToken);
 
         await _customerRepository.SaveChangesAsync(cancellationToken);
 

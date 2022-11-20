@@ -17,6 +17,15 @@ public static class DomainErrors
     public static class Customer
     {
         public static Error CustomerNotFound(Guid id) => new("CustomerNotFound", $"Customer was not found with this Id: {id}");
+        public static class CreditCardErrors
+        {
+            public static Error NameOnCardIsEmpty => Error.Validation("NameOnCardIsEmpty", "Name on card can't be empty");
+            public static Error CardNumberIsEmpty => Error.Validation("cardNumberIsEmpty", "Card number can't be empty");
+            public static Error CardNumberLengthIsIncorrect => Error.Validation("cardNumberLengthIsIncorrect", "Card number length is incorrect");
+            public static Error CardExpiryInThePast => Error.Validation("CardExpiryInThePast", "Credit card expiry can't be in the past");
+            public static Error CardAlreadyExists => Error.Validation("CardAlreadyExists", "Can't add same card");
+        }
+    
     }
 
     public static class Product

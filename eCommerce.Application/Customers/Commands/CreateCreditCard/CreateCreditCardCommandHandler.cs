@@ -1,15 +1,14 @@
-﻿using eCommerce.Domain.Customers.Specifications;
-using eCommerce.Domain.Customers;
+﻿using eCommerce.Domain.Customers;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using eCommerce.Domain.Customers.Repositories;
-using eCommerce.Application.Abstractions;
 using eCommerce.Domain.SharedKernel.Results;
+using MediatR;
+using eCommerce.Domain.SharedKernel.Errors;
 
 namespace eCommerce.Application.Customers.Commands.CreateCreditCard;
 
-public class CreateCreditCardCommandHandler : ICommandHandler<CreateCreditCardCommand, Result>
+public sealed class CreateCreditCardCommandHandler : IRequestHandler<CreateCreditCardCommand, Result>
 {
     private readonly ICustomerRepository _customerRepository;
 
@@ -20,16 +19,19 @@ public class CreateCreditCardCommandHandler : ICommandHandler<CreateCreditCardCo
 
     public async Task<Result> Handle(CreateCreditCardCommand request, CancellationToken cancellationToken)
     {
-        var registeredSpec = new CustomerRegisteredSpec(request.CustomerId);
+        var customer = await _customerRepository.GetCustomerByIdAsync(request.Id, cancellationToken);
 
-        var customer = await _customerRepository.FirstOrDefaultAsync(registeredSpec, cancellationToken);
+        if (customer is null)
+            return Result.Failure(Error.NotFound("CustomerNotFound", $"No such customer with '{request.Id}' exists"));
 
-        if (customer == null) 
-            throw new Exception("No such customer exists");
+        var createCreditCardOperationResult = CreditCard.Create(customer, request.NameOnCard, request.CardNumber, request.Expiry);
 
-        var creditCard = CreditCard.Create(customer, request.CreditCard.NameOnCard, request.CreditCard.CardNumber, request.CreditCard.Expiry);
+        if (createCreditCardOperationResult.IsFailure)
+            return Result.Failure(createCreditCardOperationResult.Errors);
 
-        customer.Add(creditCard);
+        var creditCardValue = createCreditCardOperationResult.Value;
+
+        customer.Add(creditCardValue);
 
         await _customerRepository.SaveChangesAsync(cancellationToken);
 

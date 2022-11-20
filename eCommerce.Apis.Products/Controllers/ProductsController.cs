@@ -1,8 +1,18 @@
-﻿using ecommerce.Apis.Common;
-using eCommerce.Application.Products.Dtos;
+﻿using ecommerce.Apis.Contrats.Customers;
+using eCommerce.Application.Customers.Dtos.Responses;
+using eCommerce.Application.Products.Commands.CreateProduct;
+using eCommerce.Application.Products.Commands.UpdateProduct;
+using eCommerce.Application.Products.Dtos.Requests;
+using eCommerce.Application.Products.Dtos.Responses;
+using eCommerce.Application.Products.Queries.GetAllProducts;
+using eCommerce.Application.Products.Queries.GetProductById;
+using eCommerce.Domain.SharedKernel.Errors;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Threading.Tasks;
 
 namespace eCommerce.Apis.Products.Controllers;
 
@@ -14,30 +24,40 @@ public class ProductsController : ApiController
     }
 
     [HttpGet]
-    public IActionResult Get()
+    [ProducesResponseType(typeof(IEnumerable<CustomerResponseDto>), 200)]
+    [ProducesResponseType(typeof(Error), 500)]
+    public async Task<IActionResult> GetAll()
     {
-        //var result = _productService.GetAllProducts();
-        //return Ok(result);
-        return Ok();
+        return ToResult(await Mediator.Send(GetAllProductsQuery.Create()));
     }
 
-    [HttpGet]
     [Route("{id}")]
-    public IActionResult Get(Guid id)
+    [HttpGet]
+    [ProducesResponseType(typeof(ProductResponseDto), 200)]
+    [ProducesResponseType(typeof(IEnumerable<Error>), 400)]
+    [ProducesResponseType(404)]
+    [ProducesResponseType(typeof(Error), 500)]
+    public async Task<IActionResult> GetById([Required] Guid id)
     {
-        //var result = _productService.Get(id);
-
-        //return result.Match<IActionResult>(Ok, NotFound);
-        return Ok();
-
+        return ToResult(await Mediator.Send(GetProductByIdQuery.Create(id)));
     }
 
     [HttpPost]
-    public IActionResult Add([FromBody] ProductDto productDto)
+    [ProducesResponseType(200)]
+    [ProducesResponseType(typeof(IEnumerable<Error>), 400)]
+    [ProducesResponseType(typeof(Error), 500)]
+    public async Task<IActionResult> Add([FromBody] CreateProductRequestDto dto)
     {
-        //var response = _productService.Add(productDto);
+        return ToResult(await Mediator.Send(CreateProductCommand.Create(dto.Name, dto.Quantity, dto.Cost, dto.ProductCode)));
+    }
 
-        //return Ok(response);
-        return Ok();
+    [Route("{id}")]
+    [HttpPut]
+    [ProducesResponseType(204)]
+    [ProducesResponseType(typeof(IEnumerable<Error>), 400)]
+    [ProducesResponseType(typeof(Error), 500)]
+    public async Task<IActionResult> Update([Required] Guid id, [FromBody] UpdateProductRequestDto dto)
+    {
+        return ToResult(await Mediator.Send(UpdateProductCommand.Create(id, dto.Name, dto.Quantity, dto.Cost, dto.ProductCode)));
     }
 }

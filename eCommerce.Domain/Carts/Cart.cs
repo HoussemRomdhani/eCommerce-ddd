@@ -11,13 +11,15 @@ using System.Linq;
 
 namespace eCommerce.Domain.Carts;
 
-public class Cart : EntityBase, IAggregateRoot
+public class Cart : IAggregateRoot
 {
     private List<CartProduct> _cartProducts = new();
+    public Guid Id { get; protected set; }
     public Guid CustomerId { get; protected set; }
     public ReadOnlyCollection<CartProduct> Products => _cartProducts.AsReadOnly();
     public decimal TotalCost => Products.Sum(cartProduct => cartProduct.Quantity * cartProduct.Cost);
     public decimal TotalTax => Products.Sum(cartProducts => cartProducts.Tax);
+
 
     public static Cart Create(Customer customer) => new()
     {

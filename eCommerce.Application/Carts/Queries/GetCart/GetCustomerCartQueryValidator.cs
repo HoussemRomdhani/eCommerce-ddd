@@ -9,6 +9,6 @@ public sealed class GetCustomerCartQueryValidator : AbstractValidator<GetCustome
     public GetCustomerCartQueryValidator()
     {
         RuleFor(x => x.CustomerId).NotEmpty()
-                                  .WithError(ValidationErrors.GetCustomerCartQuery.CustomerIdIsRequired);
+                                  .WithError(ValidationErrors.Customer.GetCustomerCartQuery.CustomerIdIsRequired);
     }
 }

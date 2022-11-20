@@ -9,9 +9,9 @@ public sealed class RemoveProductCommandValidator : AbstractValidator<RemoveProd
     public RemoveProductCommandValidator()
     {
         RuleFor(x => x.CustomerId).NotEmpty()
-                                 .WithError(ValidationErrors.RemoveProductFromCartRequest.CustomerIdIsRequired);
+                                 .WithError(ValidationErrors.Cart.RemoveProductFromCartRequest.CustomerIdIsRequired);
 
         RuleFor(x => x.ProductId).NotEmpty()
-                                 .WithError(ValidationErrors.RemoveProductFromCartRequest.ProductIdIsRequired);
+                                 .WithError(ValidationErrors.Cart.RemoveProductFromCartRequest.ProductIdIsRequired);
     }
 }

@@ -2,31 +2,45 @@
 
 namespace eCommerce.Domain.SharedKernel.Results;
 
-public class Result
+public class Result 
 {
-    protected Result(bool isSuccess, Error error)
+    private List<Error> _errors = new();
+    protected Result(List<Error> errors)
     {
-        if (isSuccess && error != Error.None)
-            throw new InvalidOperationException();
-
-        if (!isSuccess && error == Error.None)
-            throw new InvalidOperationException();
-
-        IsSuccess = isSuccess;
-        Error = error;
+        _errors.AddRange(errors);
     }
 
-    public bool IsSuccess { get; }
+    protected Result(Error error)
+    {
+        _errors.Add(error);
+    }
 
-    public bool IsFailure => !IsSuccess;
+    public bool IsSuccess
+    {
+        get
+        {
+            return !IsFailure;
+        }
+    }
 
-    public Error Error { get; }
+    public bool IsFailure
+    {
+        get
+        {
+          return  _errors is not null &&
+                  _errors.Count > 0;
+        }
+    }
 
-    public static Result Success() => new(true, Error.None);
+    public List<Error> Errors => _errors;
+    public Error Error => _errors.FirstOrDefault();
 
-    public static Result<TValue> Success<TValue>(TValue value) => new(value, true, Error.None);
+    public static Result Success() => new(new List<Error>());
+    public static Result Failure(Error error) => new(error);
+    public static Result Failure(List<Error> errors) => new(errors);
 
-    public static Result Failure(Error error) => new Result(false, error);
-    
-    public static Result<TValue> Failure<TValue>(Error error) => new Result<TValue>(default!, false, error);
+    public static Result<TValue> Success<TValue>(TValue value) => new(value);
+    public static Result<TValue> Failure<TValue>(Error error) => new(default!, error);
+    public static Result<TValue> Failure<TValue>(List<Error> errors) => new(default!, errors);
+
 }

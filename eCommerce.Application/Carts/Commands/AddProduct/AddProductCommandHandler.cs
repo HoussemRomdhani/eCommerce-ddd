@@ -1,53 +1,49 @@
-﻿using eCommerce.Application.Abstractions;
-using eCommerce.Domain.Carts;
-using eCommerce.Domain.Carts.Specifications;
+﻿using eCommerce.Domain.Carts;
 using eCommerce.Domain.Common.DomainErrors;
 using eCommerce.Domain.Customers;
 using eCommerce.Domain.Products;
 using eCommerce.Domain.Services;
-using eCommerce.Domain.SharedKernel.Repositories;
 using eCommerce.Domain.SharedKernel.Results;
+using MediatR;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace eCommerce.Application.Carts.Commands.AddProduct;
 
-public sealed class AddProductCommandHandler : ICommandHandler<AddProductCommand, Result>
+public sealed class AddProductCommandHandler : IRequestHandler<AddProductCommand, Result>
 {
-    private readonly IReadRepositoryBase<Customer> _customerRepository;
-    private readonly IReadRepositoryBase<Product> _productRepository;
-    private readonly IRepositoryBase<Cart> _cartRepository;
+    private readonly ICartRepository _cartRepository;
+    private readonly IProductRepository _productRepository;
+    private readonly ICustomerRepository _customerRepository;
     private readonly TaxService _taxDomainService;
 
-    public AddProductCommandHandler(IReadRepositoryBase<Customer> customerRepository,
-                                    IReadRepositoryBase<Product> productRepository,
-                                    IRepositoryBase<Cart> cartRepository,
+    public AddProductCommandHandler(ICartRepository cartRepository,
+                                    IProductRepository productRepository,
+                                    ICustomerRepository customerRepository,
                                     TaxService taxDomainService)
     {
-        _customerRepository = customerRepository ?? throw new ArgumentNullException(nameof(customerRepository));
         _productRepository = productRepository ?? throw new ArgumentNullException(nameof(productRepository));
         _cartRepository = cartRepository ?? throw new ArgumentNullException(nameof(cartRepository));
+        _customerRepository = customerRepository ?? throw new ArgumentNullException(nameof(customerRepository));
         _taxDomainService = taxDomainService ?? throw new ArgumentNullException(nameof(taxDomainService));
     }
 
     public async Task<Result> Handle(AddProductCommand request, CancellationToken cancellationToken)
     {
-        var customer = await _customerRepository.GetByIdAsync(request.CustomerId, cancellationToken);
+        var customer = await _customerRepository.GetCustomerByIdAsync(request.CustomerId, cancellationToken);
 
         if (customer is null)
             return Result.Failure(DomainErrors.Customer.CustomerNotFound(request.CustomerId));
 
-        var cart = await _cartRepository.FirstOrDefaultAsync(new CustomerCartSpec(request.CustomerId), cancellationToken);
+        var cart = await _cartRepository.GetCartByCustomerIdAsync(request.CustomerId, cancellationToken);
 
         if (cart is null)
         {
             cart = Cart.Create(customer);
-
-            await _cartRepository.AddAsync(cart, cancellationToken);
         }
 
-        var product = await _productRepository.GetByIdAsync(request.CartProduct.ProductId, cancellationToken);
+        var product = await _productRepository.GetProductByIdAsync(request.CartProduct.ProductId, cancellationToken);
 
         if (product is null)
             return Result.Failure(DomainErrors.Product.CustomerNotFound(request.CustomerId));
@@ -56,7 +52,7 @@ public sealed class AddProductCommandHandler : ICommandHandler<AddProductCommand
 
         cart.Add(cartProduct);
 
-        await _cartRepository.SaveChangesAsync(cancellationToken);
+        await _cartRepository.AddCartAsync(cart, cancellationToken);
 
         return Result.Success();
     }

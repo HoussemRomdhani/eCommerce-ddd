@@ -1,16 +1,21 @@
-﻿using eCommerce.Application.Abstractions;
-using eCommerce.Application.Carts.Dtos.Responses;
+﻿using eCommerce.Application.Carts.Dtos.Responses;
 using eCommerce.Domain.SharedKernel.Results;
+using MediatR;
 using System;
 
 namespace eCommerce.Application.Carts.Queries.GetCart;
 
-public class GetCustomerCartQuery : IQuery<Result<CartResponseDto>>
+public sealed class GetCustomerCartQuery : IRequest<Result<CartResponseDto>>
 {
-    public GetCustomerCartQuery(Guid customerId)
+    public Guid CustomerId { get; }
+
+    private GetCustomerCartQuery(Guid customerId)
     {
         CustomerId = customerId;
     }
 
-    public Guid CustomerId { get; }
+    public static GetCustomerCartQuery Create(Guid customerId)
+    {
+        return new GetCustomerCartQuery(customerId);
+    }
 }

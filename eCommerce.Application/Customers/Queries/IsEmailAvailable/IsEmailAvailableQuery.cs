@@ -1,9 +1,9 @@
-﻿using eCommerce.Application.Abstractions;
-using eCommerce.Domain.SharedKernel.Results;
+﻿using eCommerce.Domain.SharedKernel.Results;
+using MediatR;
 
 namespace eCommerce.Application.Customers.Queries.IsEmailAvailable;
 
-public class IsEmailAvailableQuery : IQuery<Result<bool>>
+public class IsEmailAvailableQuery : IRequest<Result<bool>>
 {
     public string Email { get; }
 

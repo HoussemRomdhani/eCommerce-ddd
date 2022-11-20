@@ -1,18 +1,27 @@
-﻿using eCommerce.Application.Abstractions;
-using eCommerce.Application.Customers.Dtos.Requests;
+﻿using eCommerce.Application.Customers.Dtos.Requests;
 using eCommerce.Domain.SharedKernel.Results;
+using MediatR;
 using System;
 
 namespace eCommerce.Application.Customers.Commands.CreateCreditCard;
 
-public class CreateCreditCardCommand : ICommand<Result>
+public sealed class CreateCreditCardCommand : IRequest<Result>
 {
-    public Guid CustomerId { get;  }
-    public CreateCreditCardRequest CreditCard { get; }
+    public Guid Id { get;  }
+    public string NameOnCard { get; }
+    public string CardNumber { get; }
+    public DateTime Expiry { get; }
 
-    public CreateCreditCardCommand(Guid id, CreateCreditCardRequest dto)
+    private CreateCreditCardCommand(Guid id, CreateCreditCardRequest dto)
     {
-        CustomerId = id;
-        CreditCard = dto;
+        Id = id;
+        NameOnCard = dto.NameOnCard;
+        CardNumber = dto.CardNumber;
+        Expiry = dto.Expiry;
+    }
+
+    public static CreateCreditCardCommand Create(Guid id, CreateCreditCardRequest dto)
+    {
+        return new CreateCreditCardCommand(id, dto);
     }
 }
